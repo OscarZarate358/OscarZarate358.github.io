@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arquitectura de Software</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      text-align: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .panzoom-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  cursor: grab;
+  background-color: #fff; 
+}
+
+.panzoom-container img {
+  width: 100%;             
+  height: auto;           
+  max-width: 2500px;     
+  max-height: 100vh;       
+  display: block;
+  object-fit: contain;      
+  user-select: none;
+  pointer-events: none;
+}
+  </style>
+</head>
+<body>
+  <!-- 🔹 Aquí cambias el título -->
+
+  <!-- 🔹 Aquí cambias la imagen -->
+  <div class="panzoom-container" id="panzoom-container">
+    <img src="Imagenes/Mapa conceptual (1).png" alt="Mapa Conceptual TPS">
+  </div>
+
+  <!-- 📌 Panzoom -->
+  <script src="https://unpkg.com/@panzoom/panzoom/dist/panzoom.min.js"></script>
+  <script>
+    const elem = document.getElementById("panzoom-container");
+    const panzoom = Panzoom(elem, {
+      maxScale: 5,
+      minScale: 1,
+      step: 0.3,
+      contain: 'outside'
+    });
+
+    elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel);
+    elem.addEventListener('dblclick', () => {
+      panzoom.reset();
+    });
+  </script>
+</body>
+</html>
