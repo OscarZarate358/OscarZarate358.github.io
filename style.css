@@ -7,18 +7,18 @@
   
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: radial-gradient(circle at top left, #1e1e2e, #121212);
-    color: #EAEAEA;
+    background: #f5f5f5; /* Fondo claro */
+    color: #333; /* Texto principal */
     line-height: 1.6;
 }
+
 /* ==== HEADER ==== */
 .header {
-    background: #1E1E2E; /* Fondo navbar */
+    background: #2c2c2c; /* Gris muy oscuro (casi negro) */
     padding: 1rem 2rem;
     position: sticky;
     top: 0;
     z-index: 1000;
-    border-bottom: 1px solid #2E2E3E;
 }
   
 .navbar {
@@ -32,7 +32,7 @@ body {
 .logo {
     font-size: 1.4rem;
     font-weight: bold;
-    color: #00B8A9; /* Nuevo color de acento */
+    color: #ffffff;
 }
   
 .nav-links {
@@ -41,66 +41,166 @@ body {
     gap: 1rem;
 }
   
-.nav-links li a {
-    text-decoration: none;
-    color: #EAEAEA;
-    padding: 8px 16px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-}
-  
+    .nav-links li a {
+        text-decoration: none;
+        color: #ffffff;
+        padding: 8px 16px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        border: 1px solid #ffffff33;
+    }
+    
 .nav-links li a:hover {
-    background: #00B8A9;
-    color: #121212;
+    background: #0a3d91; /* Azul marino más fuerte */
+    color: #ffffff;
 }
   
 .btn-login {
-    border: 1px solid #00B8A9;
-    color: #00B8A9;
+    border: 1px solid #0a3d91;
+    color: #ffffff;
 }
   
 .btn-login:hover {
-    background: #00B8A9;
-    color: #121212;
+    background: #0a3d91;
+    color: #ffffff;
 }
-  
-/* ==== HERO ==== */
+ /* ==== HERO ==== */
 .hero {
+    position: relative;
+    background-image: url('Imagenes/Ingenieria\ UPLA.jpg'); /* Cambia la ruta */
+    background-size: cover;
+    background-position: center;
+    color: white;
     text-align: center;
-    padding: 80px 20px;
-    background: linear-gradient(145deg, #121212, #1E1E2E);
-    color: #EAEAEA;
+    padding: 100px 20px;
+    overflow: hidden;
 }
-  
+
+/* Capa oscura para contraste */
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+/* Texto dentro del Hero */
+.hero h1,
+.hero p {
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+}
+
+/* Animaciones */
 .hero h1 {
     font-size: 3rem;
     margin-bottom: 20px;
-    color: #00B8A9; /* Nuevo acento */
+    animation: fadeDown 1s ease forwards;
 }
-  
+
 .hero p {
-    font-size: 1.2rem;
-    color: #B0B0B0;
+    font-size: 1.5rem;
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 0.6s;
 }
-  
+
+/* Fondo con zoom lento */
+.hero {
+    animation: bgZoom 10s ease-in-out infinite alternate;
+}
+
+/* Keyframes */
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bgZoom {
+    from {
+        background-size: 100%;
+    }
+    to {
+        background-size: 110%;
+    }
+}
 /* ==== MAIN CONTENT ==== */
 .content {
-    max-width: 1200px;
-    margin: 50px auto;
-    padding: 20px;
-}
-  
-.content h2 {
+    background: #f8f9fa; /* fondo gris muy suave */
+    padding: 60px 20px;
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 2rem;
-    color: #00B8A9; /* Nuevo acento */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin: 40px auto;
+    max-width: 1000px;
+    overflow: hidden; /* por seguridad con animaciones */
 }
-  
+
+.content h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px;
+
+    /* Animación de aparición */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s ease forwards;
+}
+
+/* Línea decorativa animada */
+.content h2::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 4px;
+    background: #003366; /* azul marino */
+    margin: 10px auto 0;
+    border-radius: 2px;
+    animation: slideIn 1s ease forwards;
+    animation-delay: 0.8s; /* empieza después del fade */
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    to {
+        width: 60px;
+    }
+}
 /* ==== ACCORDION ==== */
 .accordion {
-    background-color: #1E1E2E;
-    color: #EAEAEA;
+    background-color: #0a3d91; /* Azul fuerte */
+    color: #ffffff;
     cursor: pointer;
     padding: 18px;
     width: 100%;
@@ -114,24 +214,25 @@ body {
 }
   
 .accordion:hover {
-    background-color: #2A2A3A;
+    background-color: #124fb1; /* Azul más claro al hover */
 }
   
 .accordion.active {
-    background-color: #00B8A9;
-    color: #121212;
+    background-color: #124fb1;
+    color: #ffffff;
 }
   
 .panel {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.4s ease-out, padding 0.3s ease;
-    background-color: #1A1A25;
-    border-left: 3px solid #00B8A9;
+    background-color: #f5f5f5;
+    border-left: 3px solid #0a3d91;
     border-radius: 0 0 8px 8px;
     margin-bottom: 12px;
     padding: 0 10px;
     pointer-events: none;
+    color: #333;
 }
   
 .panel.open {
@@ -154,7 +255,7 @@ body {
     align-items: center;
     height: 180px;
     text-align: center;
-    color: white;
+    color: #ffffff;
     text-decoration: none;
     border-radius: 10px;
     background-size: cover;
@@ -169,7 +270,7 @@ body {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.45);
+    background: rgba(0,0,0,0.45); /* Negro translúcido en lugar de azul */
     transition: background 0.3s ease;
     border-radius: 10px;
 }
@@ -180,7 +281,7 @@ body {
 }
   
 .skill:hover::before {
-    background: rgba(0,0,0,0.65);
+    background: rgba(0,0,0,0.65); /* Un poco más oscuro al hacer hover */
 }
   
 .skill h3 {
@@ -188,43 +289,44 @@ body {
     font-size: 1.2rem;
     position: relative;
     z-index: 1;
-    color: #EAEAEA; /* Nuevo acento */
+    color: #ffffff;
 }
   
 .skill p {
     margin: 5px 0 10px;
     font-size: 0.9rem;
-    color: #EAEAEA;
+    color: #f5f5f5;
     position: relative;
     z-index: 1;
 }
   
 /* ==== FOOTER ==== */
 footer {
-    background: transparent; /* Se quita el color sólido */
-    color: #B0B0B0;
+    background: #2c2c2c; /* Igual que el header */
+    color: #ffffff;
     text-align: center;
     padding: 15px;
     margin-top: 40px;
-    border-top: 1px solid #2E2E3E;
+    border-top: 3px solid #0a3d91;
 }
 
+/* ==== BOTÓN DESCARGA ==== */
 .download-btn {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: #00B8A9;
+    background: #0a3d91;
     border: none;
-    color: #121212;
+    color: #ffffff;
     font-size: 1.1rem;
     padding: 6px 10px;
     border-radius: 6px;
     cursor: pointer;
     z-index: 2;
     transition: background 0.3s ease, transform 0.2s ease;
-  }
+}
   
-  .download-btn:hover {
-    background: #00e6d0;
+.download-btn:hover {
+    background: #1357c5;
     transform: scale(1.1);
-  }
+}
