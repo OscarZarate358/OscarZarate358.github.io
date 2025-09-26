@@ -48,7 +48,7 @@
 
     /* Caja de login */
     .login-container {
-      background: #f5f7fa; /* Gris claro azulado en lugar de blanco puro */
+      background: #f5f7fa;
       padding: 40px;
       border-radius: 15px;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
@@ -95,25 +95,6 @@
       background: #f9f9f9;
     }
 
-    .options {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.9rem;
-      margin-bottom: 20px;
-      color: #444;
-    }
-
-    .options a {
-      color: #1a4079;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-
-    .options a:hover {
-      color: #163665;
-    }
-
     .login-btn {
       width: 100%;
       padding: 12px;
@@ -130,6 +111,13 @@
     .login-btn:hover {
       background: #163665;
     }
+
+    .error-msg {
+      margin-top: 15px;
+      color: #c0392b;
+      font-weight: bold;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -143,10 +131,10 @@
 
   <div class="login-container">
     <h2>Iniciar Sesión</h2>
-    <form>
+    <form id="loginForm">
       <div class="form-group">
-        <label for="email">Correo electrónico</label>
-        <input type="email" id="email" placeholder="Ingrese su correo" required>
+        <label for="email">Usuario</label>
+        <input type="text" id="email" placeholder="Ingrese su usuario" required>
       </div>
 
       <div class="form-group">
@@ -154,13 +142,30 @@
         <input type="password" id="password" placeholder="Ingrese su contraseña" required>
       </div>
 
-      <div class="options">
-        <label><input type="checkbox"> Recordarme</label>
-        <a href="#">¿Olvidaste tu contraseña?</a>
-      </div>
-
       <button type="submit" class="login-btn">Ingresar</button>
+      <div id="errorMsg" class="error-msg">❌ Usuario o contraseña incorrectos</div>
     </form>
   </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    // ⚡ Aquí defines tu usuario y contraseña
+    const ADMIN_USER = "r01148g@upla.edu.pe";
+    const ADMIN_PASS = "admin";
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      if (email === ADMIN_USER && password === ADMIN_PASS) {
+        window.location.href = "admin.html"; // acceso concedido
+      } else {
+        errorMsg.style.display = "block";
+      }
+    });
+  </script>
 </body>
 </html>
