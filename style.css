@@ -330,3 +330,9 @@ footer {
     background: #1357c5;
     transform: scale(1.1);
 }
+
+.pdf-preview canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
