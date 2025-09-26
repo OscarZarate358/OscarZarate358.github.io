@@ -2,191 +2,159 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Repositorio</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Repositorio</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- SDK Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js"></script>
 </head>
 
 <body>
-    <!-- HEADER -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="logo">
-                <a href="index.html">
-                    <img src="Imagenes/UPLA_Logo.png " alt="Logo UPLA" style="height: 40px; vertical-align: middle;">
-                    <span style="color: #ffffff; font-weight: bold; margin-left: 8px;">UPLA</span>
-                </a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="index.html">Menú</a></li>
-                <li><a href="Login.html" class="btn-login">Login</a></li>
-            </ul>
-        </nav>
-    </header>
+  <!-- HEADER -->
+  <header class="header">
+    <nav class="navbar">
+      <div class="logo">
+        <a href="index.html">
+          <img src="Imagenes/UPLA_Logo.png" alt="Logo UPLA" style="height: 40px; vertical-align: middle;">
+          <span style="color: #ffffff; font-weight: bold; margin-left: 8px;">UPLA</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Menú</a></li>
+        <li><a href="Login.html" class="btn-login">Login</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <!-- ==== HERO ==== -->
-    <section class="hero">
-        <h1>Arquitectura de Software</h1>
-        <p>Repositorio de las semanas</p>
-    </section>
+  <!-- ==== HERO ==== -->
+  <section class="hero">
+    <h1>Arquitectura de Software</h1>
+    <p>Repositorio de documentos organizados por semanas</p>
+  </section>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="content">
-        <h2>SEMANAS</h2>
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="content">
+    <h2>SEMANAS</h2>
+    <div id="accordion-container"></div>
+  </main>
 
-        <!-- Semana 01 -->
-        <button class="accordion">Semana 01</button>
-        <div class="panel">
-            <div class="skills-container">
-                <a href="Semana01_Org.html" class="skill"
-                    style="background-image: url('Imagenes/Mapa conceptual (1).png');">
-                    <h3>Arquitectura de Software</h3>
-                    <p>Actividad 1</p>
-                </a>
-                
-                <a href="Documentos/Actividad1.pdf" target="_blank" class="skill"
-                style="background-image: url('Imagenes/Actividad1.png');">
-                <h3>Biblioteca Digital</h3>
-                <p>Actividad 2</p>
-            </a>
-            </div>
-        </div>
+  <script>
+    // 🔑 Configuración Supabase
+    const SUPABASE_URL = "https://bxjqdsnekmbldvfnjvpg.supabase.co";
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4anFkc25la21ibGR2Zm5qdnBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4NjUyODUsImV4cCI6MjA3NDQ0MTI4NX0.ibjF_Icj3C81g5fRO6yuOhCxCyCzN7M_SCSjvUXSPwc";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        <!-- Semana 02 -->
-        <button class="accordion">Semana 02</button>
-        <div class="panel">
-            <div class="skills-container">
-                <a href="Semana02_Org.html" class="skill" style="background-image: url('Imagenes/Semana02MapaConceptual.png');">
-                    <p>Actividad 1</p>
-                </a>
+    // 📌 Renderizar miniatura PDF
+    async function renderPDFThumbnail(url, canvas) {
+      try {
+        const pdf = await pdfjsLib.getDocument(url).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 1.5 });
 
-                <a href="Documentos/Actividad1.pdf" target="_blank" class="skill"
-                    style="background-image: url('Imagenes/Actividad1.png');">
-                    <h3>Biblioteca Digital</h3>
-                    <p>Actividad 2</p>
-                </a>
-                
-                <a href="Documentos/Actividad2.pdf" target="_blank" class="skill"
-                    style="background-image: url('Imagenes/Actividad2.png');">
-                    <h3>Biblioteca Digital</h3>
-                    <p>Actividad 3</p>
-                </a>
+        const tempCanvas = document.createElement("canvas");
+        const tempCtx = tempCanvas.getContext("2d");
+        tempCanvas.width = viewport.width;
+        tempCanvas.height = viewport.height;
 
-                <a href="Documentos/Actividad3.pdf" target="_blank" class="skill" style="background-image: url('Imagenes/Actividad3.png');">
-                    <h3>Informe comparativo de calidad de software</h3>
-                    <p>Actividad 4</p>
-                </a>
+        await page.render({ canvasContext: tempCtx, viewport }).promise;
 
+        const ctx = canvas.getContext("2d");
+        canvas.width = 120;
+        canvas.height = 150;
+        ctx.drawImage(tempCanvas, 0, 0, viewport.width, viewport.height, 0, 0, canvas.width, canvas.height);
+      } catch (err) {
+        console.error("Error generando preview:", err);
+      }
+    }
 
-            </div>
-        </div>
+    // 📌 Generar acordeón dinámico por semanas
+    async function cargarDocumentos() {
+      const { data, error } = await supabase
+        .from("documentos")
+        .select("*")
+        .order("semana", { ascending: true });
 
-        <!-- Semana 03 -->
-        <button class="accordion">Semana 03</button>
-        <div class="panel">
-            <div class="skills-container">
-                <a href="TPS.html" class="skill" style="background-image: url('Imagenes/semana09.jpg');">
-                    <p>Semana 09</p>
-                </a>
+      if (error) {
+        console.error("Error al cargar documentos:", error.message);
+        return;
+      }
 
-                <a href="MIS.html" class="skill" style="background-image: url('Imagenes/semana10.jpg');">
-                    <p>Semana 10</p>
-                </a>
+      const container = document.getElementById("accordion-container");
 
-                <a href="DSS.html" class="skill" style="background-image: url('Imagenes/semana11.jpg');">
-                    <p>Semana 11</p>
-                </a>
+      // Agrupar documentos por semana
+      const semanas = {};
+      data.forEach(doc => {
+        if (!semanas[doc.semana]) semanas[doc.semana] = [];
+        semanas[doc.semana].push(doc);
+      });
 
-                <a href="EIS.html" class="skill" style="background-image: url('Imagenes/semana12.jpg');">
-                    <p>Semana 12</p>
-                </a>
-            </div>
-        </div>
+      // Crear acordeón
+      Object.keys(semanas).forEach(sem => {
+        // Botón del acordeón
+        const button = document.createElement("button");
+        button.classList.add("accordion");
+        button.textContent = `Semana ${sem}`;
+        container.appendChild(button);
 
-        <!-- Semana 04 -->
-        <button class="accordion">Semana 04</button>
-        <div class="panel">
-            <div class="skills-container">
-                <a href="TPS.html" class="skill" style="background-image: url('Imagenes/semana13.jpg');">
-                    <p>Semana 13</p>
-                </a>
+        // Panel de la semana
+        const panel = document.createElement("div");
+        panel.classList.add("panel");
+        const skillsContainer = document.createElement("div");
+        skillsContainer.classList.add("skills-container");
 
-                <a href="MIS.html" class="skill" style="background-image: url('Imagenes/semana14.jpg');">
-                    <p>Semana 14</p>
-                </a>
+        semanas[sem].forEach(doc => {
+          const item = document.createElement("a");
+          item.href = doc.url;
+          item.target = "_blank";
+          item.classList.add("skill");
 
-                <a href="DSS.html" class="skill" style="background-image: url('Imagenes/semana15.jpg');">
-                    <p>Semana 15</p>
-                </a>
+          // Preview PDF
+          const preview = document.createElement("div");
+          preview.classList.add("pdf-preview");
+          const canvas = document.createElement("canvas");
+          preview.appendChild(canvas);
 
-                <a href="EIS.html" class="skill" style="background-image: url('Imagenes/semana16.jpg');">
-                    <p>Semana 16</p>
-                </a>
-            </div>
-        </div>
+          const titulo = document.createElement("h3");
+          titulo.textContent = doc.titulo;
+          const semana = document.createElement("p");
+          semana.textContent = "Actividad";
 
-        <!-- Semana 05 -->
-        <button class="accordion">Semana 05</button>
-        <div class="panel">
-            <div class="skills-container">
-                <a href="TPS.html" class="skill" style="background-image: url('Imagenes/semana13.jpg');">
-                    <p>Semana 13</p>
-                </a>
+          item.appendChild(preview);
+          item.appendChild(titulo);
+          item.appendChild(semana);
+          skillsContainer.appendChild(item);
 
-                <a href="MIS.html" class="skill" style="background-image: url('Imagenes/semana14.jpg');">
-                    <p>Semana 14</p>
-                </a>
-
-                <a href="DSS.html" class="skill" style="background-image: url('Imagenes/semana15.jpg');">
-                    <p>Semana 15</p>
-                </a>
-
-                <a href="EIS.html" class="skill" style="background-image: url('Imagenes/semana16.jpg');">
-                    <p>Semana 16</p>
-                </a>
-            </div>
-        </div>
-
-        <!-- Semana 06 -->
-        <button class="accordion">Semana 06</button>
-        <div class="panel">
-            <div class="skills-container">
-                <a href="TPS.html" class="skill" style="background-image: url('Imagenes/semana13.jpg');">
-                    <p>Semana 13</p>
-                </a>
-
-                <a href="MIS.html" class="skill" style="background-image: url('Imagenes/semana14.jpg');">
-                    <p>Semana 14</p>
-                </a>
-
-                <a href="DSS.html" class="skill" style="background-image: url('Imagenes/semana15.jpg');">
-                    <p>Semana 15</p>
-                </a>
-
-                <a href="EIS.html" class="skill" style="background-image: url('Imagenes/semana16.jpg');">
-                    <p>Semana 16</p>
-                </a>
-            </div>
-        </div>
-    </main>
-
-    <!-- SCRIPT -->
-    <script>
-        const accordions = document.querySelectorAll(".accordion");
-        accordions.forEach((acc) => {
-            acc.addEventListener("click", function () {
-                this.classList.toggle("active");
-                const panel = this.nextElementSibling;
-                if (panel.style.maxHeight) {
-                    panel.style.maxHeight = null;
-                    panel.classList.remove("open");
-                } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                    panel.classList.add("open");
-                }
-            });
+          renderPDFThumbnail(doc.url, canvas);
         });
-    </script>
-</body>
 
+        panel.appendChild(skillsContainer);
+        container.appendChild(panel);
+      });
+
+      // Activar acordeón
+      const acc = document.querySelectorAll(".accordion");
+      acc.forEach(button => {
+        button.addEventListener("click", function () {
+          this.classList.toggle("active");
+          const panel = this.nextElementSibling;
+          if (panel.style.maxHeight) {
+            panel.style.maxHeight = null;
+            panel.classList.remove("open");
+          } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+            panel.classList.add("open");
+          }
+        });
+      });
+    }
+
+    cargarDocumentos();
+  </script>
+</body>
 </html>
