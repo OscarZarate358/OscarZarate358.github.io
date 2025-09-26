@@ -1,0 +1,377 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Subir Documentos</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    main {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 1rem;
+      display: block;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 10px;
+      background: #0c2c66;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background: #0a2250;
+    }
+
+    .msg {
+      margin-top: 1rem;
+      padding: 10px;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .msg.success {
+      background: #d4edda;
+      color: #155724;
+      display: block;
+    }
+
+    .msg.error {
+      background: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+
+    /* Visor de documentos */
+    #visor {
+      margin-top: 2rem;
+    }
+
+    #visor h3 {
+      margin-bottom: 1rem;
+      color: #0c2c66;
+    }
+
+    .doc-item {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .doc-preview {
+      width: 100px;
+      height: 130px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f1f1;
+    }
+
+    .doc-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .doc-info {
+      flex: 1;
+    }
+
+    .doc-info strong {
+      color: #0c2c66;
+    }
+
+    .doc-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-delete {
+      background: #b3261e;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn-delete:hover {
+      background: #8a1b15;
+    }
+
+    .btn-view {
+      background: #1a4079;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 10px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .btn-view:hover {
+      background: #0c2c66;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header class="header">
+    <nav class="navbar">
+      <div class="logo">
+        <a>
+          <img src="Imagenes/UPLA_Logo.png" alt="Logo UPLA" style="height: 40px; vertical-align: middle;">
+          <span style="color: #ffffff; font-weight: bold; margin-left: 8px;">UPLA</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Menú</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- FORMULARIO -->
+  <main>
+    <h2>Subir nuevo documento</h2>
+    <form id="uploadForm">
+      <label for="titulo">Título</label>
+      <input type="text" id="titulo" required>
+
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" rows="3"></textarea>
+
+      <label for="semana">Semana</label>
+      <select id="semana" required>
+        <option value="">Seleccione...</option>
+        <option value="1">Semana 1</option>
+        <option value="2">Semana 2</option>
+        <option value="3">Semana 3</option>
+        <option value="4">Semana 4</option>
+        <option value="5">Semana 5</option>
+        <option value="6">Semana 6</option>
+        <option value="7">Semana 7</option>
+        <option value="8">Semana 8</option>
+        <option value="9">Semana 9</option>
+        <option value="10">Semana 10</option>
+        <option value="11">Semana 11</option>
+        <option value="12">Semana 12</option>
+        <option value="13">Semana 13</option>
+        <option value="14">Semana 14</option>
+        <option value="15">Semana 15</option>
+        <option value="16">Semana 16</option>
+      </select>
+
+      <label for="file">Archivo PDF</label>
+      <input type="file" id="file" accept="application/pdf" required>
+
+      <button type="submit">Subir Documento</button>
+    </form>
+
+    <div id="msg" class="msg"></div>
+
+    <!-- Visor de documentos -->
+    <div id="visor">
+      <h3>Documentos subidos</h3>
+      <div id="docList"></div>
+    </div>
+  </main>
+
+  <!-- SDK Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+    const SUPABASE_URL = "https://bxjqdsnekmbldvfnjvpg.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4anFkc25la21ibGR2Zm5qdnBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4NjUyODUsImV4cCI6MjA3NDQ0MTI4NX0.ibjF_Icj3C81g5fRO6yuOhCxCyCzN7M_SCSjvUXSPwc";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById("uploadForm");
+    const msgBox = document.getElementById("msg");
+    const docList = document.getElementById("docList");
+
+    // Función que devuelve miniatura (imagen base64) de la primera hoja
+    async function getPdfThumbnail(url) {
+      try {
+        const pdf = await pdfjsLib.getDocument(url).promise;
+        const page = await pdf.getPage(1);
+
+        const viewport = page.getViewport({ scale: 0.3 }); // ajusta escala
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        await page.render({ canvasContext: ctx, viewport }).promise;
+
+        return canvas.toDataURL();
+      } catch (e) {
+        console.error("Error generando thumbnail:", e);
+        return null;
+      }
+    }
+
+    // Subir documento
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const titulo = document.getElementById("titulo").value;
+      const descripcion = document.getElementById("descripcion").value;
+      const semana = document.getElementById("semana").value;
+      const file = document.getElementById("file").files[0];
+
+      if (!file) return;
+
+      const filePath = `semana${semana}/${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase
+        .storage
+        .from("documentos")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        showMessage("❌ Error al subir el archivo: " + uploadError.message, "error");
+        return;
+      }
+
+      const { data: urlData } = supabase
+        .storage
+        .from("documentos")
+        .getPublicUrl(filePath);
+
+      const publicUrl = urlData.publicUrl;
+
+      const { error: insertError } = await supabase
+        .from("documentos")
+        .insert([{ titulo, descripcion, semana, url: publicUrl, path: filePath }]);
+
+      if (insertError) {
+        showMessage("❌ Error al registrar en la base de datos: " + insertError.message, "error");
+        return;
+      }
+
+      showMessage("✅ Documento subido correctamente", "success");
+      form.reset();
+      loadDocuments();
+    });
+
+    function showMessage(msg, type) {
+      msgBox.textContent = msg;
+      msgBox.className = "msg " + type;
+    }
+
+    async function deleteDocument(id, path) {
+      if (!confirm("¿Seguro que deseas eliminar este documento?")) return;
+
+      const { error: storageError } = await supabase
+        .storage
+        .from("documentos")
+        .remove([path]);
+
+      if (storageError) {
+        alert("Error al eliminar del storage: " + storageError.message);
+        return;
+      }
+
+      const { error: dbError } = await supabase
+        .from("documentos")
+        .delete()
+        .eq("id", id);
+
+      if (dbError) {
+        alert("Error al eliminar de la base de datos: " + dbError.message);
+        return;
+      }
+
+      alert("✅ Documento eliminado correctamente");
+      loadDocuments();
+    }
+
+    // Cargar documentos con miniaturas
+    async function loadDocuments() {
+      const { data, error } = await supabase
+        .from("documentos")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        docList.innerHTML = "<p>Error al cargar documentos</p>";
+        return;
+      }
+
+      if (data.length === 0) {
+        docList.innerHTML = "<p>No hay documentos subidos aún.</p>";
+        return;
+      }
+
+      docList.innerHTML = "";
+
+      for (const doc of data) {
+        const thumb = await getPdfThumbnail(doc.url);
+
+        const div = document.createElement("div");
+        div.className = "doc-item";
+
+        div.innerHTML = `
+          <div class="doc-preview">
+            ${
+              thumb
+                ? `<img src="${thumb}" alt="Vista previa de ${doc.titulo}">`
+                : `<p>Sin vista previa</p>`
+            }
+          </div>
+          <div class="doc-info">
+            <p><strong>${doc.titulo}</strong> (Semana ${doc.semana})</p>
+            <p>${doc.descripcion || ""}</p>
+          </div>
+          <div class="doc-actions">
+            <a class="btn-view" href="${doc.url}" target="_blank"> Ver</a>
+            <button class="btn-delete" onclick="deleteDocument(${doc.id}, '${doc.path}')"> Eliminar</button>
+          </div>
+        `;
+
+        docList.appendChild(div);
+      }
+    }
+
+    loadDocuments();
+  </script>
+</body>
+</html>
