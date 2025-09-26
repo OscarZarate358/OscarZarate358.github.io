@@ -2,159 +2,160 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Repositorio</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Repositorio</title>
+    <link rel="stylesheet" href="style.css">
 
-  <!-- SDK Supabase -->
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+    <!-- SDK Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js"></script>
 
-  <!-- PDF.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js"></script>
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js"></script>
 </head>
 
 <body>
-  <!-- HEADER -->
-  <header class="header">
-    <nav class="navbar">
-      <div class="logo">
-        <a href="index.html">
-          <img src="Imagenes/UPLA_Logo.png" alt="Logo UPLA" style="height: 40px; vertical-align: middle;">
-          <span style="color: #ffffff; font-weight: bold; margin-left: 8px;">UPLA</span>
-        </a>
-      </div>
-      <ul class="nav-links">
-        <li><a href="index.html">Menú</a></li>
-        <li><a href="Login.html" class="btn-login">Login</a></li>
-      </ul>
-    </nav>
-  </header>
+    <!-- HEADER -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="Imagenes/UPLA_Logo.png" alt="Logo UPLA" style="height: 40px; vertical-align: middle;">
+                    <span style="color: #ffffff; font-weight: bold; margin-left: 8px;">UPLA</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Menú</a></li>
+                <li><a href="Login.html" class="btn-login">Login</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <!-- ==== HERO ==== -->
-  <section class="hero">
-    <h1>Arquitectura de Software</h1>
-    <p>Repositorio de documentos organizados por semanas</p>
-  </section>
+    <!-- ==== HERO ==== -->
+    <section class="hero">
+        <h1>Arquitectura de Software</h1>
+        <p>Repositorio de documentos organizados por semanas</p>
+    </section>
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="content">
-    <h2>SEMANAS</h2>
-    <div id="accordion-container"></div>
-  </main>
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="content">
+        <h2>SEMANAS</h2>
+        <div id="accordion-container"></div>
+    </main>
 
-  <script>
-    // 🔑 Configuración Supabase
-    const SUPABASE_URL = "https://bxjqdsnekmbldvfnjvpg.supabase.co";
-    const SUPABASE_ANON_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4anFkc25la21ibGR2Zm5qdnBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4NjUyODUsImV4cCI6MjA3NDQ0MTI4NX0.ibjF_Icj3C81g5fRO6yuOhCxCyCzN7M_SCSjvUXSPwc";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <script>
+        // 🔑 Configuración Supabase
+        const SUPABASE_URL = "https://bxjqdsnekmbldvfnjvpg.supabase.co";
+        const SUPABASE_ANON_KEY =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4anFkc25la21ibGR2Zm5qdnBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4NjUyODUsImV4cCI6MjA3NDQ0MTI4NX0.ibjF_Icj3C81g5fRO6yuOhCxCyCzN7M_SCSjvUXSPwc";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // 📌 Renderizar miniatura PDF
-    async function renderPDFThumbnail(url, canvas) {
-      try {
-        const pdf = await pdfjsLib.getDocument(url).promise;
-        const page = await pdf.getPage(1);
-        const viewport = page.getViewport({ scale: 1.5 });
+        // 📌 Renderizar miniatura PDF
+        async function renderPDFThumbnail(url, canvas) {
+            try {
+                const pdf = await pdfjsLib.getDocument(url).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 1.5 });
 
-        const tempCanvas = document.createElement("canvas");
-        const tempCtx = tempCanvas.getContext("2d");
-        tempCanvas.width = viewport.width;
-        tempCanvas.height = viewport.height;
+                const tempCanvas = document.createElement("canvas");
+                const tempCtx = tempCanvas.getContext("2d");
+                tempCanvas.width = viewport.width;
+                tempCanvas.height = viewport.height;
 
-        await page.render({ canvasContext: tempCtx, viewport }).promise;
+                await page.render({ canvasContext: tempCtx, viewport }).promise;
 
-        const ctx = canvas.getContext("2d");
-        canvas.width = 120;
-        canvas.height = 150;
-        ctx.drawImage(tempCanvas, 0, 0, viewport.width, viewport.height, 0, 0, canvas.width, canvas.height);
-      } catch (err) {
-        console.error("Error generando preview:", err);
-      }
-    }
+                const ctx = canvas.getContext("2d");
+                canvas.width = 120;
+                canvas.height = 150;
+                ctx.drawImage(tempCanvas, 0, 0, viewport.width, viewport.height, 0, 0, canvas.width, canvas.height);
+            } catch (err) {
+                console.error("Error generando preview:", err);
+            }
+        }
 
-    // 📌 Generar acordeón dinámico por semanas
-    async function cargarDocumentos() {
-      const { data, error } = await supabase
-        .from("documentos")
-        .select("*")
-        .order("semana", { ascending: true });
+        // 📌 Generar acordeón dinámico por semanas
+        async function cargarDocumentos() {
+            const { data, error } = await supabase
+                .from("documentos")
+                .select("*")
+                .order("semana", { ascending: true });
 
-      if (error) {
-        console.error("Error al cargar documentos:", error.message);
-        return;
-      }
+            if (error) {
+                console.error("Error al cargar documentos:", error.message);
+                return;
+            }
 
-      const container = document.getElementById("accordion-container");
+            const container = document.getElementById("accordion-container");
 
-      // Agrupar documentos por semana
-      const semanas = {};
-      data.forEach(doc => {
-        if (!semanas[doc.semana]) semanas[doc.semana] = [];
-        semanas[doc.semana].push(doc);
-      });
+            // Agrupar documentos por semana
+            const semanas = {};
+            data.forEach(doc => {
+                if (!semanas[doc.semana]) semanas[doc.semana] = [];
+                semanas[doc.semana].push(doc);
+            });
 
-      // Crear acordeón
-      Object.keys(semanas).forEach(sem => {
-        // Botón del acordeón
-        const button = document.createElement("button");
-        button.classList.add("accordion");
-        button.textContent = `Semana ${sem}`;
-        container.appendChild(button);
+            // Crear acordeón
+            Object.keys(semanas).forEach(sem => {
+                // Botón del acordeón
+                const button = document.createElement("button");
+                button.classList.add("accordion");
+                button.textContent = `Semana ${sem}`;
+                container.appendChild(button);
 
-        // Panel de la semana
-        const panel = document.createElement("div");
-        panel.classList.add("panel");
-        const skillsContainer = document.createElement("div");
-        skillsContainer.classList.add("skills-container");
+                // Panel de la semana
+                const panel = document.createElement("div");
+                panel.classList.add("panel");
+                const skillsContainer = document.createElement("div");
+                skillsContainer.classList.add("skills-container");
 
-        semanas[sem].forEach(doc => {
-          const item = document.createElement("a");
-          item.href = doc.url;
-          item.target = "_blank";
-          item.classList.add("skill");
+                semanas[sem].forEach(doc => {
+                    const item = document.createElement("a");
+                    item.href = doc.url;
+                    item.target = "_blank";
+                    item.classList.add("skill");
 
-          // Preview PDF
-          const preview = document.createElement("div");
-          preview.classList.add("pdf-preview");
-          const canvas = document.createElement("canvas");
-          preview.appendChild(canvas);
+                    // Preview PDF
+                    const preview = document.createElement("div");
+                    preview.classList.add("pdf-preview");
+                    const canvas = document.createElement("canvas");
+                    preview.appendChild(canvas);
 
-          const titulo = document.createElement("h3");
-          titulo.textContent = doc.titulo;
-          const semana = document.createElement("p");
-          semana.textContent = "Actividad";
+                    const titulo = document.createElement("h3");
+                    titulo.textContent = doc.titulo;
+                    const descripcion = document.createElement("p");
+                    descripcion.textContent = doc.descripcion || "Sin descripción";
 
-          item.appendChild(preview);
-          item.appendChild(titulo);
-          item.appendChild(semana);
-          skillsContainer.appendChild(item);
+                    item.appendChild(preview);
+                    item.appendChild(titulo);
+                    item.appendChild(descripcion);
+                    skillsContainer.appendChild(item);
 
-          renderPDFThumbnail(doc.url, canvas);
-        });
+                    renderPDFThumbnail(doc.url, canvas);
+                });
 
-        panel.appendChild(skillsContainer);
-        container.appendChild(panel);
-      });
+                panel.appendChild(skillsContainer);
+                container.appendChild(panel);
+            });
 
-      // Activar acordeón
-      const acc = document.querySelectorAll(".accordion");
-      acc.forEach(button => {
-        button.addEventListener("click", function () {
-          this.classList.toggle("active");
-          const panel = this.nextElementSibling;
-          if (panel.style.maxHeight) {
-            panel.style.maxHeight = null;
-            panel.classList.remove("open");
-          } else {
-            panel.style.maxHeight = panel.scrollHeight + "px";
-            panel.classList.add("open");
-          }
-        });
-      });
-    }
+            // Activar acordeón
+            const acc = document.querySelectorAll(".accordion");
+            acc.forEach(button => {
+                button.addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    const panel = this.nextElementSibling;
+                    if (panel.style.maxHeight) {
+                        panel.style.maxHeight = null;
+                        panel.classList.remove("open");
+                    } else {
+                        panel.style.maxHeight = panel.scrollHeight + "px";
+                        panel.classList.add("open");
+                    }
+                });
+            });
+        }
 
-    cargarDocumentos();
-  </script>
+        cargarDocumentos();
+    </script>
 </body>
+
 </html>
